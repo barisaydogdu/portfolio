@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #300a24;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 15px;
+        }
+        #terminal {
+            height: 100%;
+            padding: 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+        #input-line {
+            display: flex;
+            align-items: center;
+        }
+        #prompt {
+            color: #4e9a06;
+            margin-right: 10px;
+        }
+        #input-container {
+            position: relative;
+            flex-grow: 1;
+        }
+        #input {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+            caret-color: transparent;
+        }
+        #cursor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 16px;
+            background-color: #ffffff;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .command-list{
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px 20px;
+            align-items: start;
+            margin-top: 20px;
+        }
+        .output {
+            margin-bottom: 10px;
+            white-space: pre-wrap;
+        }
+        .description {
+            color: #ffffff;
+        }
+        .mySkillsColour{
+            color: #6B93C0;
+        }
+        .command {
+            color: #7BD632;
+        }
+    </style>
+</head>
+<body>
+
+    <pre>
+
+        ____             _          _             _                 _       
+        | __ )  __ _ _ __(_)___     / \  _   _  __| | ___   __ _  __| |_   _ 
+        |  _ \ / _` | '__| / __|   / _ \| | | |/ _` |/ _ \ / _` |/ _` | | | |
+        | |_) | (_| | |  | \__ \  / ___ \ |_| | (_| | (_) | (_| | (_| | |_| |
+        |____/ \__,_|_|  |_|___/ /_/   \_\__, |\__,_|\___/ \__, |\__,_|\__,_|
+                                         |___/             |___/             
+    </pre>
+    <div id="terminal">
+        <div class="output">Welcome to the Digital Command Center!
+            <div class="output">Feel free to explore and discover what you can do!
+            </div>
+Type <span style="color: #7BD632;">'help' </span> to see available commands.</div>
+
+        <div id="input-line">
+            <span id="prompt">$</span>
+            <div id="input-container">
+                <input  type="text" id="input" autofocus autocomplete="off">
+                <div id="cursor"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const input = document.getElementById('input');
+        const cursor = document.getElementById('cursor');
+        const terminal = document.getElementById('terminal');
+        const output = document.createElement('div');
+      const aboutMe='I am Baris Aydogdu, a 4th-year Computer Engineering student with a passion for software development and programming. Constantly improving myself in the field of computer engineering, I have a great interest in innovations and technological advancements. My curiosity to explore the potential in this field continues to grow every day. Through my hobby of coding, I not only stay with theoretical knowledge but also find opportunities to enhance my ability to solve real-world problems. My creative thinking and problem-solving skills support my eagerness to learn and engage in new projects. In this process, both individually and as part of a team, I challenge myself continuously, aiming to adapt to new technologies. Detail-oriented, organized, and meticulous, I work at a fast pace to meet tight deadlines. As an enthusiastic team player, I am ready to contribute to company success.'
+        
+        const commands = {
+            'help': 'Displays this help message',
+            'download cv': 'Downloads my CV',
+            'whoami':'About me',
+            'linkedin': 'Opens my LinkedIn profile',
+            'github': 'Opens my GitHub profile',
+            'skills': 'What tech stacks I use',
+            'clear':'Clear the terminal screen',
+            'cmd/ctrl + k': 'Keyboard shortcut to clear the terminal'
+        };
+
+        function addOutput(text) {
+         
+            output.className = 'output';
+            output.textContent = text;
+            output.innerHTML = text;
+           // output.style.color="#7BD632"
+            terminal.insertBefore(output, document.getElementById('input-line'));
+        }
+    
+        function processCommand(cmd) {
+            switch(cmd.toLowerCase()) {
+                case 'help':
+                let helpText = 'Available commands:\n<div class="command-list">';
+                    for (let [command, description] of Object.entries(commands)) {
+                       helpText += `<span class="command">${command}</span><span class="description">${description}</span>`;
+                    }
+                    helpText+='</div>';
+
+                    addOutput(helpText);
+                    break;
+                case 'download cv':
+                     addOutput('Initiating CV download...');
+                     const link = document.createElement('a');
+                     link.href = 'cv2/BarisAydogduCV.pdf';
+                     link.download = 'BarisAydogduCV.pdf';
+                     document.body.appendChild(link);
+                     link.click();
+                     document.body.removeChild(link);
+                     break;
+                case 'linkedin':
+                    addOutput('Opening LinkedIn profile...');
+                    window.open('https://www.linkedin.com/in/barisaydogdu/', '_blank');
+                    break;
+                case 'github':
+                    addOutput('Opening GitHub profile...');
+                    window.open('https://github.com/barisaydogdu', '_blank');
+                    break;
+                case 'clear':
+                    clearTerminal();
+                    break;
+                case 'whoami':
+                    addOutput(aboutMe)
+                    break;
+                case 'skills':
+                    showSkills();
+                    break;
+                default:
+                    addOutput(`Command not found: ${cmd}. Type 'help' for available commands.`);
+            }
+        }
+
+        input.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                const cmd = input.value;
+                addOutput(`$ ${cmd}`);
+                processCommand(cmd);
+                input.value = '';
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+            updateCursorPosition();
+        });
+
+        input.addEventListener('input', updateCursorPosition);
+        
+        
+        function showSkills() {
+            const skills = ['Java', 'Go', 'C#', 'SQL',".NetCore","Test Automation (JUnit, TestNG, Selenium Web Driver)","Agile","SpringBoot","Python"];
+            let skillsOutput = '<span class="mySkillsColour">My skills:</span>\n<ul style="list-style-type:square;" class="skills-list">';
+            skills.forEach(skill => {
+                skillsOutput += `<li>${skill}</li>`;
+            });
+            skillsOutput += '</ul>';
+            addOutput(skillsOutput);
+        }
+
+
+        function updateCursorPosition() {
+            const inputRect = input.getBoundingClientRect();
+            const inputStyle = window.getComputedStyle(input);
+            const inputText = input.value;
+            
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            context.font = inputStyle.font;
+            
+            const textWidth = context.measureText(inputText).width;
+            
+            cursor.style.left = `${textWidth}px`;
+        }
+
+        // Initial cursor position
+        updateCursorPosition();
+
+        function clearTerminal() {
+            output.innerHTML = '';
+        }
+
+              // Add event listener for Cmd/Ctrl + K
+              document.addEventListener('keydown', function(event) {
+            if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+                event.preventDefault();
+                clearTerminal();
+            }
+        });
+  </script>
+  
+</body>
+</html>
