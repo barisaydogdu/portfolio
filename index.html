@@ -65,6 +65,7 @@
         .output {
             margin-bottom: 10px;
             white-space: pre-wrap;
+            word-wrap: break-word;
         }
         .description {
             color: #ffffff;
@@ -74,6 +75,41 @@
         }
         .command {
             color: #7BD632;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 1.2em;
+        }
+        
+        @media (max-width: 768px) {
+            body, html {
+                font-size: 14px;
+            }
+            #terminal {
+                padding: 10px;
+            }
+            pre {
+                font-size: 0.8em;
+            }
+            .command-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body, html {
+                font-size: 12px;
+            }
+            #terminal {
+                padding: 5px;
+            }
+            pre {
+                font-size: 0.6em;
+            }
+            #input {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
